@@ -1,9 +1,10 @@
-import React from 'react';
+
+import Book from '../../components/Book';
 
 const Home = () => {
     return (
-        <div>
-            this is home
+        <div className='container mx-auto'>
+            <Book/>
         </div>
     );
 };
