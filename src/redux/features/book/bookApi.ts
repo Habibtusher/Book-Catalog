@@ -36,6 +36,14 @@ const booksApi = api.injectEndpoints({
         return queryString;
       },
     }),
+    addNewBook: builder.mutation({
+      query: ( data ) => ({
+        url: 'books/add-new-book',
+        method: 'POST',
+        body: data,
+      }),
+      
+    })
     // singleProduct: builder.query({
     //   query: (id) => `/product/${id}`,
     // }),
@@ -53,4 +61,4 @@ const booksApi = api.injectEndpoints({
     // }),
   }),
 });
-export const { useGetLatestBooksQuery, useGetBooksQuery } = booksApi;
+export const { useGetLatestBooksQuery, useGetBooksQuery,useAddNewBookMutation } = booksApi;

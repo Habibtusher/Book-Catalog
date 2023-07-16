@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useSignupUserMutation } from "../../redux/features/user/userApi";
+import { toast } from "react-hot-toast";
+import {useEffect} from 'react';
 const Signup = () => {
   type SignupFormValues = {
     email: string;
@@ -11,12 +13,28 @@ const Signup = () => {
     formState: { errors },
     handleSubmit,
   } = useForm<SignupFormValues>();
-  const [signup, { isError, isLoading, isSuccess,error }] = useSignupUserMutation();
-  const onSignup = (data: SignupFormValues) => {
-    signup({data:data})
-    
+  const [signup, { isError, isLoading, isSuccess, error }] =
+    useSignupUserMutation();
+  const navigate = useNavigate();
+  const onSignup = (values: SignupFormValues) => {
+    signup(values);
   };
-  console.log(error?.data?.errorMessages[0].message);
+  
+  useEffect(() => {
+    if (!isLoading && isSuccess) {
+      toast.success("User registered successfully! please login");
+      navigate("/login");
+    }
+
+    if (!isLoading && isError && error) {
+      if (error?.data?.errorMessages[0]?.message.includes("duplicate ")) {
+        toast.error("Email already used, please login");
+      }
+    }
+  }, [isLoading, isSuccess, isError, error, navigate]);
+
+
+
   return (
     <div className="h-[800px] flex justify-center items-center">
       <div className="w-96 p-7 shadow-xl ">
@@ -62,7 +80,6 @@ const Signup = () => {
           </div>
 
           <input
-          
             className="btn btn-accent w-full mt-5"
             type="submit"
             value="Sign Up"

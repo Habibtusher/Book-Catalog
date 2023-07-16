@@ -1,5 +1,10 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useLoginUserMutation } from "../../redux/features/user/userApi";
+import { useEffect } from "react";
+import { toast } from "react-hot-toast";
+import { setUser } from "../../redux/features/user/userSlice";
+import { useAppDispatch } from "../../redux/hooks";
 
 const Login = () => {
   type LoginFormValues = {
@@ -11,9 +16,30 @@ const Login = () => {
     formState: { errors },
     handleSubmit,
   } = useForm<LoginFormValues>();
+  const [login, { isError, isLoading, error, data, isSuccess }] =
+    useLoginUserMutation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const onLogin = (data: LoginFormValues) => {
-    console.log(data);
+    login(data);
   };
+  useEffect(() => {
+    if (!isLoading && isSuccess) {
+      toast.success(data?.message);
+      navigate("/");
+    }
+
+    if (!isLoading && isError && error) {
+      toast.error(error?.data.errorMessages[0].message);
+    }
+  
+    if (!isLoading && isSuccess ) {
+      dispatch(setUser(data?.data.email));
+      localStorage.setItem("user", JSON.stringify(data?.data.email));
+
+    }
+  }, [isLoading, isSuccess, isError, error, navigate,data,dispatch]);
+
   return (
     <div className="h-[800px] flex justify-center items-center">
       <div className="w-96 p-7 shadow-xl ">

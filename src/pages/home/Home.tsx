@@ -5,8 +5,11 @@ import { IBook } from "../../globalTypes/globalTypes";
 import Loading from "../shared/Loading";
 import { useNavigate } from "react-router-dom";
 
+
 const Home = () => {
   const { data, error, isLoading } = useGetLatestBooksQuery(undefined);
+ 
+
   const navigate = useNavigate();
   let body = null;
   if (isLoading) {
