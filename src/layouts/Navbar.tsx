@@ -16,7 +16,7 @@ const Navbar = () => {
         <div className="flex items-center gap-5">
           <div className="dropdown dropdown-end">
             <div className="flex items-center justify-center">
-              {user?.email && <Link to="/books">Books</Link>}
+               <Link to="/books">Books</Link>
             </div>
           </div>
           <div className="dropdown dropdown-end">
@@ -57,7 +57,7 @@ const Navbar = () => {
                   <a onClick={() => {
                     // localStorage.removeItem('user')
                     // dispatch(setUser(""))
-                    }}>Want to read</a>
+                    }}>Plan to read</a>
                 </li>
                 <li>
                   <a onClick={() => {

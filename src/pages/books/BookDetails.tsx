@@ -23,7 +23,10 @@ const BookDetails = () => {
       id: id,
       data: { review: reviewText },
     };
-    addReview(data);
+    if(reviewText){
+      addReview(data);
+    }
+    
   };
   useEffect(() => {
     if (isSuccess) {
