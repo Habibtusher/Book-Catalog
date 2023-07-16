@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useAppSelector } from "../../redux/hooks";
 import { toast } from "react-hot-toast";
@@ -64,9 +63,15 @@ const EditBook = () => {
     }
 
     if (!isLoading && isError && error) {
-      toast.error(error?.data.errorMessages[0].message);
+      if ('data' in error) {
+        const data:any = error.data;
+        toast.error(data.errorMessages[0].message);
+      } else {
+
+        toast.error('An error occurred. Please try again later.');
+      }
     }
-  }, [isLoading, isSuccess, isError, error, editedData, reset]);
+  }, [isLoading, isSuccess, isError, error, editedData, reset,navigate]);
   const genres = [
     { value: "Fiction", title: "Fiction" },
     { value: "Mystery", title: "Mystery" },

@@ -1,10 +1,9 @@
-import { format, getYear } from "date-fns";
+import { format, } from "date-fns";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useAppSelector } from "../../redux/hooks";
 import { useAddNewBookMutation } from "../../redux/features/book/bookApi";
 import { toast } from "react-hot-toast";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 type FormInputs = {
   title: string;
@@ -72,7 +71,13 @@ const AddNewBooks = () => {
     }
 
     if (!isLoading && isError && error) {
-      toast.error(error?.data.errorMessages[0].message);
+      if ('data' in error) {
+        const data:any = error.data;
+        toast.error(data.errorMessages[0].message);
+      } else {
+
+        toast.error('An error occurred. Please try again later.');
+      }
     }
   }, [isLoading, isSuccess, isError, error, data, reset]);
   return (

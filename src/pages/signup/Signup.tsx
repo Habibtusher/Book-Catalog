@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useSignupUserMutation } from "../../redux/features/user/userApi";
 import { toast } from "react-hot-toast";
-import {useEffect} from 'react';
+import { useEffect } from "react";
 const Signup = () => {
   type SignupFormValues = {
     email: string;
@@ -19,21 +19,20 @@ const Signup = () => {
   const onSignup = (values: SignupFormValues) => {
     signup(values);
   };
-  
+
   useEffect(() => {
     if (!isLoading && isSuccess) {
       toast.success("User registered successfully! please login");
       navigate("/login");
     }
 
-    if (!isLoading && isError && error) {
-      if (error?.data?.errorMessages[0]?.message.includes("duplicate ")) {
+    if (!isLoading && isError && error && "data" in error) {
+      const data: any = error?.data;
+      if (data.errorMessages[0]?.message.includes("duplicate ")) {
         toast.error("Email already used, please login");
       }
     }
   }, [isLoading, isSuccess, isError, error, navigate]);
-
-
 
   return (
     <div className="h-[800px] flex justify-center items-center">

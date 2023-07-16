@@ -33,7 +33,13 @@ const Login = () => {
     }
 
     if (!isLoading && isError && error) {
-      toast.error(error?.data.errorMessages[0].message);
+      if ('data' in error) {
+        const data:any = error.data;
+        toast.error(data.errorMessages[0].message);
+      } else {
+        // Handle the case when 'error' is of type 'SerializedError'
+        toast.error('An error occurred. Please try again later.');
+      }
     }
   
     if (!isLoading && isSuccess ) {
