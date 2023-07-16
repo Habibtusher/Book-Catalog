@@ -25,7 +25,7 @@ const Books = () => {
     genre: genre,
   };
 
-  const { data, error, isLoading } = useGetBooksQuery({ filter });
+  const { data, error, isLoading } = useGetBooksQuery({ filter },{pollingInterval:30000,refetchOnFocus:true});
   const handleBookDetails = (id: string) => {
     navigate(`/book/details/${id}`);
   };
