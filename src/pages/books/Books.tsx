@@ -1,13 +1,15 @@
+import { useNavigate } from "react-router-dom";
 import { IBook } from "../../globalTypes/globalTypes";
 import { useGetBooksQuery } from "../../redux/features/book/bookApi";
 import Loading from "../shared/Loading";
 import { useState } from "react";
 const Books = () => {
-  const [pagination, setPagination] = useState();
-  const [searchValue, setSearchValue] = useState<string | null>("");
-  const [publicationYear, setPublicationYear] = useState<string | null>('');
 
-  const [genre, setGenre] = useState<string | null>('');
+  const [searchValue, setSearchValue] = useState<string | null>("");
+  const [publicationYear, setPublicationYear] = useState<string | null>("");
+
+  const [genre, setGenre] = useState<string | null>("");
+  const navigate = useNavigate();
   interface IFilter {
     page: number;
     limit?: number;
@@ -23,83 +25,86 @@ const Books = () => {
     genre: genre,
   };
 
-  let queryParams = "?";
-
-  if (filter.page) {
-    queryParams += `page=${filter.page}&`;
-  }
-
-  if (filter.limit) {
-    queryParams += `limit=${filter.limit}&`;
-  }
-
-  if (filter.searchTerm) {
-    queryParams += `searchTerm=${filter.searchTerm}&`;
-  }
-
-  if (filter.publicationYear) {
-    queryParams += `publicationYear=${filter.publicationYear}&`;
-  }
-
-  if (filter.genre) {
-    queryParams += `genre=${filter.genre}&`;
-  }
-
-  // Remove trailing '&' if present
-  if (queryParams.endsWith("&")) {
-    queryParams = queryParams.slice(0, -1);
-  }
-
-  console.log(queryParams);
   const { data, error, isLoading } = useGetBooksQuery({ filter });
+  const handleBookDetails = (id: string) => {
+    navigate(`/book/details/${id}`);
+  };
   let body = null;
   if (isLoading) {
     body = <Loading />;
   }
   if (!isLoading && !error && data) {
     body = (
-      <div className="overflow-x-auto">
-        <table className="table">
-          {/* head */}
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Author</th>
-              <th>Genre</th>
-              <th>Publication Date</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.data.map((book: IBook) => (
-              <tr>
-                <td>
-                  <div className="flex items-center space-x-3">
-                    <div>
-                      <div className="font-bold">{book.title}</div>
-                      {/* <div className="text-sm opacity-50">United States</div> */}
-                    </div>
-                  </div>
-                </td>
-                <td>{book.author}</td>
-                <td>{book.genre}</td>
-                <td>{book.publicationDate}</td>
-                <th>
-                  <button className="btn btn-ghost btn-xs">details</button>
-                </th>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="text-center pt-5">
-          <div className="join ">
-            <button className="join-item btn">1</button>
-            <button className="join-item btn">2</button>
-            <button className="join-item btn">3</button>
-            <button className="join-item btn">4</button>
+      <div className="grid xl:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 sm:justify-items-center gap-4">
+        {data?.data.map((book: IBook) => (
+          <div
+            onClick={() => handleBookDetails(book._id)}
+            key={book._id}
+            className="card w-72 bg-base-100 shadow-xl cursor-pointer"
+          >
+            <figure className="px-5 pt-5">
+              <img
+                src="https://i.ibb.co/bN1GKhL/Untitled.png"
+                alt="cover"
+                className="rounded-xl h-60"
+              />
+            </figure>
+            <div className="card-body">
+              <h2 className="card-title">{book?.title}</h2>
+              <p className="font-normal">By {book.author}</p>
+              <p className="font-light text-gray-400">
+                Published on: {book.publicationDate}
+              </p>
+              {/* <div className="card-actions">
+                <button className="btn btn-primary">Buy Now</button>
+              </div> */}
+            </div>
           </div>
-        </div>
+        ))}
       </div>
+
+      // <div className="overflow-x-auto">
+      //   <table className="table">
+      //     {/* head */}
+      //     <thead>
+      //       <tr>
+      //         <th>Title</th>
+      //         <th>Author</th>
+      //         <th>Genre</th>
+      //         <th>Publication Date</th>
+      //         <th></th>
+      //       </tr>
+      //     </thead>
+      //     <tbody>
+      //       {data?.data.map((book: IBook) => (
+      //         <tr>
+      //           <td>
+      //             <div className="flex items-center space-x-3">
+      //               <div>
+      //                 <div className="font-bold">{book.title}</div>
+      //                 {/* <div className="text-sm opacity-50">United States</div> */}
+      //               </div>
+      //             </div>
+      //           </td>
+      //           <td>{book.author}</td>
+      //           <td>{book.genre}</td>
+      //           <td>{book.publicationDate}</td>
+      //           <th>
+      //             <button className="btn btn-ghost btn-xs">details</button>
+      //           </th>
+      //         </tr>
+      //       ))}
+      //     </tbody>
+      //   </table>
+      //   <div className="text-center pt-5">
+      //     <div className="join ">
+      //       <button className="join-item btn">1</button>
+      //       <button className="join-item btn">2</button>
+      //       <button className="join-item btn">3</button>
+      //       <button className="join-item btn">4</button>
+      //     </div>
+      //   </div>
+      // </div>
     );
   }
   const years = [
@@ -165,6 +170,28 @@ const Books = () => {
     { value: 2039, title: 2039 },
     { value: 2040, title: 2040 },
   ];
+  const genres = [
+    { value: "Fiction", title: "Fiction" },
+    { value: "Mystery", title: "Mystery" },
+    { value: "Thriller", title: "Thriller" },
+    { value: "Romance", title: "Romance" },
+    { value: "Science Fiction", title: "Science Fiction" },
+    { value: "Fantasy", title: "Fantasy" },
+    { value: "Historical Fiction", title: "Historical Fiction" },
+    { value: "Horror", title: "Horror" },
+    { value: "Biography", title: "Biography" },
+    { value: "Autobiography", title: "Autobiography" },
+    { value: "Memoir", title: "Memoir" },
+    { value: "Self-help", title: "Self-help" },
+    { value: "Young Adult", title: "Young Adult" },
+    { value: "Children's Books", title: "Children's Books" },
+    { value: "Poetry", title: "Poetry" },
+    { value: "Drama", title: "Drama" },
+    { value: "Crime", title: "Crime" },
+    { value: "Adventure", title: "Adventure" },
+    { value: "Comedy", title: "Comedy" },
+    { value: "Nonfiction", title: "Nonfiction" },
+  ];
   return (
     <div className="container mx-auto pb-10">
       <div className="flex justify-between pb-5">
@@ -173,8 +200,8 @@ const Books = () => {
           <input
             onChange={(e) => setSearchValue(e.target.value)}
             type="text"
-            placeholder="Type here"
-            className="input input-bordered input-sm w-full max-w-xs"
+            placeholder="Search by title, author, genre"
+            className="input input-bordered input-sm "
           />
           <select
             value={genre as string}
@@ -184,8 +211,9 @@ const Books = () => {
             <option disabled value="">
               Filter by genre
             </option>
-            <option value="Fiction">Fiction</option>
-            <option value="Nonfiction">Nonfiction</option>
+            {genres?.map((genre) => (
+              <option value={genre.value}>{genre.title}</option>
+            ))}
           </select>
           <select
             //   defaultValue={publicationYearD as string}

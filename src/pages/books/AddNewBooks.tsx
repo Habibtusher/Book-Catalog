@@ -3,6 +3,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useAppSelector } from "../../redux/hooks";
 import { useAddNewBookMutation } from "../../redux/features/book/bookApi";
 import { toast } from "react-hot-toast";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 type FormInputs = {
   title: string;
@@ -12,13 +14,15 @@ type FormInputs = {
 };
 
 const AddNewBooks = () => {
+ 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormInputs>();
   const { user } = useAppSelector((state) => state.user);
-  const [addBook, { isLoading, isError, isSuccess, data }] =
+  const [addBook, { isLoading, isError, isSuccess, data, error }] =
     useAddNewBookMutation();
   const onSubmit: SubmitHandler<FormInputs> = (values) => {
     const formattedDate = format(
@@ -30,16 +34,15 @@ const AddNewBooks = () => {
       title: values.title,
       author: values.author,
       genre: values.genre,
-      publishedYear: year,
+      publicationYear: year,
       publicationDate: formattedDate,
       addBy: user.email,
     };
     if (!user.email) {
-        toast.error("To add new book you need to login")
-    }else{
-        addBook(data)
+      toast.error("To add new book you need to login");
+    } else {
+      addBook(data);
     }
-    console.log(data);
   };
   const genres = [
     { value: "Fiction", title: "Fiction" },
@@ -63,6 +66,17 @@ const AddNewBooks = () => {
     { value: "Comedy", title: "Comedy" },
     { value: "Nonfiction", title: "Nonfiction" },
   ];
+  useEffect(() => {
+    
+    if (!isLoading && isSuccess) {
+      toast.success(data?.message);
+      reset();
+    }
+
+    if (!isLoading && isError && error) {
+      toast.error(error?.data.errorMessages[0].message);
+    }
+  }, [isLoading, isSuccess, isError, error, data,reset]);
   return (
     <div className="container mx-auto">
       <form onSubmit={handleSubmit(onSubmit)}>

@@ -4,6 +4,7 @@ const booksApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getLatestBooks: builder.query({
       query: () => "books/latest-books",
+      providesTags: ["newBook"],
     }),
     getBooks: builder.query({
       query: ({ filter }) => {
@@ -35,18 +36,28 @@ const booksApi = api.injectEndpoints({
         const queryString = `books${queryParams}`;
         return queryString;
       },
+      providesTags: ["newBook"],
     }),
     addNewBook: builder.mutation({
-      query: ( data ) => ({
-        url: 'books/add-new-book',
+      query: (data) => ({
+        url: "books/add-new-book",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["newBook"],
+    }),
+    singleBook: builder.query({
+      query: (id) => `/books/${id}`,
+      providesTags:['addReview']
+    }),
+    addReview: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `books/add-review/${id}`,
         method: 'POST',
         body: data,
       }),
-      
-    })
-    // singleProduct: builder.query({
-    //   query: (id) => `/product/${id}`,
-    // }),
+      invalidatesTags: ['addReview'],
+    }),
     // postComment: builder.mutation({
     //   query: ({ id, data }) => ({
     //     url: `/comment/${id}`,
@@ -61,4 +72,10 @@ const booksApi = api.injectEndpoints({
     // }),
   }),
 });
-export const { useGetLatestBooksQuery, useGetBooksQuery,useAddNewBookMutation } = booksApi;
+export const {
+  useGetLatestBooksQuery,
+  useGetBooksQuery,
+  useAddNewBookMutation,
+  useSingleBookQuery,
+  useAddReviewMutation
+} = booksApi;
