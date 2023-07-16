@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLoginUserMutation } from "../../redux/features/user/userApi";
 import { useEffect } from "react";
 import { toast } from "react-hot-toast";
@@ -7,6 +7,8 @@ import { setUser } from "../../redux/features/user/userSlice";
 import { useAppDispatch } from "../../redux/hooks";
 
 const Login = () => {
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
   type LoginFormValues = {
     email: string;
     password: string;
@@ -26,7 +28,8 @@ const Login = () => {
   useEffect(() => {
     if (!isLoading && isSuccess) {
       toast.success(data?.message);
-      navigate("/");
+      navigate(from, {replace: true})
+      // navigate("/");
     }
 
     if (!isLoading && isError && error) {
