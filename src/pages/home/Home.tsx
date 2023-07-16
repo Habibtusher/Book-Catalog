@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const { data, error, isLoading } = useGetLatestBooksQuery(undefined,{pollingInterval:30000,refetchOnFocus:true});
- 
 
   const navigate = useNavigate();
   let body = null;

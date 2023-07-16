@@ -16,7 +16,7 @@ const BookDetails = () => {
   const { id } = useParams();
   const [reviewText, setReviewText] = useState<string>();
 
-  const { data, isLoading } = useSingleBookQuery(id,{pollingInterval:30000,refetchOnFocus:true});
+  const { data, isLoading } = useSingleBookQuery(id,{pollingInterval:30000,refetchOnFocus:true,refetchOnMountOrArgChange:true});
   const [delteBook,{isSuccess:deleteBookSuccess,data:deleteBookData}] = useDeleteBookMutation();
   const { user } = useAppSelector((state) => state.user);
   const [addReview, { isSuccess, data: addReviewData }] =
@@ -86,7 +86,7 @@ const handleDeleteBook =()=>{
               <p className="text-2xl">{data?.data.title}</p>
               {data.data.addBy === user.email && (
                 <div className="flex gap-3 items-center text-blue-700">
-                  <p className="cursor-pointer text-sm">Edit</p>
+                  <p onClick={()=>navigator(`/edit-book/${data?.data._id}`)} className="cursor-pointer text-sm">Edit</p>
                   <p
                     onClick={() => openModal()}
                     className="cursor-pointer text-sm"

@@ -52,6 +52,7 @@ const Books = () => {
             <div className="card-body">
               <h2 className="card-title">{book?.title}</h2>
               <p className="font-normal">By {book.author}</p>
+              <p className="font-normal text-gray-500">{book.genre}</p>
               <p className="font-light text-gray-400">
                 Published on: {book.publicationDate}
               </p>
